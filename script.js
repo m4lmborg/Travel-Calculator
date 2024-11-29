@@ -30,7 +30,6 @@ let participantNames = [];
 
 // Event Listeners
 generateTableBtn.addEventListener('click', generateAttendanceTable);
-calculateBtn.addEventListener('click', calculateShares);
 selectAllBtn.addEventListener('click', selectAllNights);
 clearAllBtn.addEventListener('click', clearAllNights);
 shareResultsBtn.addEventListener('click', shareResults);
@@ -45,16 +44,9 @@ document.querySelectorAll('input[name="calc-method"]').forEach(radio => {
         });
         e.target.closest('.radio-container').classList.add('selected');
         
-        // Show/hide additional inputs
-        percentageInputs.classList.toggle('hidden', e.target.value !== 'percentage');
-        weightedInputs.classList.toggle('hidden', e.target.value !== 'weighted');
-        
-        if (e.target.value === 'percentage') {
-            updatePercentageInputs();
-        }
-        if (e.target.value === 'weighted') {
-            updateWeightedInputs();
-        }
+        // Show/hide sections based on calculation method
+        const method = e.target.value;
+        handleCalculationMethodChange(method);
     });
 });
 
@@ -106,10 +98,68 @@ function updateNameInputs() {
     }
 }
 
-// Update percentage inputs when number of people changes
+// Handle display changes based on calculation method
+function handleCalculationMethodChange(method) {
+    // Hide all optional sections first
+    percentageInputs.classList.add('hidden');
+    weightedInputs.classList.add('hidden');
+    attendanceSection.classList.add('hidden');
+    
+    // Reset results
+    resultsSection.classList.add('hidden');
+    
+    switch(method) {
+        case 'equal':
+            // For equal split, calculate immediately
+            calculateEqualSplit();
+            break;
+            
+        case 'nightly':
+            // Show attendance table for nightly calculation
+            generateAttendanceTable();
+            break;
+            
+        case 'weighted':
+            // Show weighted inputs and attendance table
+            weightedInputs.classList.remove('hidden');
+            generateAttendanceTable();
+            updateWeightedInputs();
+            break;
+            
+        case 'percentage':
+            // Show percentage inputs and calculate immediately when ready
+            percentageInputs.classList.remove('hidden');
+            updatePercentageInputs();
+            break;
+    }
+}
+
+// Calculate equal split immediately
+function calculateEqualSplit() {
+    const totalCost = parseFloat(totalCostInput.value);
+    if (!totalCost) {
+        showError('Please enter a valid total cost');
+        return;
+    }
+    
+    const people = parseInt(peopleInput.value);
+    if (!people) {
+        showError('Please enter a valid number of people');
+        return;
+    }
+    
+    const equalShare = totalCost / people;
+    const shares = Array(people).fill(equalShare);
+    displayResults(shares);
+}
+
+// Update percentage inputs
 function updatePercentageInputs() {
     const numPeople = parseInt(peopleInput.value) || 0;
     percentagesContainer.innerHTML = '';
+    
+    const defaultPercentage = Math.floor(100 / numPeople); // Use floor for whole numbers
+    let remainingPercentage = 100 - (defaultPercentage * (numPeople - 1)); // Give remainder to last person
     
     for (let i = 0; i < numPeople; i++) {
         const inputGroup = document.createElement('div');
@@ -122,56 +172,65 @@ function updatePercentageInputs() {
         input.type = 'number';
         input.min = '0';
         input.max = '100';
-        input.step = '0.1';
-        input.value = (100 / numPeople).toFixed(1);
-        input.dataset.personIndex = i;
+        input.step = '1'; // Only allow whole numbers
         
-        input.addEventListener('input', updatePercentageTotal);
+        // Last person gets the remaining percentage to ensure total is 100
+        input.value = i === numPeople - 1 ? remainingPercentage : defaultPercentage;
+        
+        input.dataset.personIndex = i;
+        input.addEventListener('input', (e) => {
+            // Force whole numbers
+            e.target.value = Math.floor(e.target.value);
+            updatePercentageTotal();
+        });
+        
+        const percentSymbol = document.createElement('span');
+        percentSymbol.textContent = '%';
+        percentSymbol.className = 'percent-symbol';
         
         inputGroup.appendChild(label);
-        inputGroup.appendChild(input);
+        const inputWrapper = document.createElement('div');
+        inputWrapper.className = 'percentage-input-wrapper';
+        inputWrapper.appendChild(input);
+        inputWrapper.appendChild(percentSymbol);
+        inputGroup.appendChild(inputWrapper);
+        
         percentagesContainer.appendChild(inputGroup);
     }
     
     updatePercentageTotal();
+    calculatePercentageSplit(); // Calculate immediately
 }
 
-// Update weighted inputs when total cost changes
-function updateWeightedInputs() {
-    const totalCost = parseFloat(totalCostInput.value) || 0;
+// Calculate percentage split
+function calculatePercentageSplit() {
+    const totalCost = parseFloat(totalCostInput.value);
+    if (!totalCost) {
+        showError('Please enter a valid total cost');
+        return;
+    }
     
-    // Default to 50-50 split between fixed and nightly costs
-    fixedCostsInput.value = (totalCost * 0.5).toFixed(2);
-    nightlyCostsInput.value = (totalCost * 0.5).toFixed(2);
+    if (!updatePercentageTotal()) {
+        showError('Percentage total must equal 100%');
+        return;
+    }
     
-    // Add listeners to maintain total
-    [fixedCostsInput, nightlyCostsInput].forEach(input => {
-        input.addEventListener('input', () => {
-            const fixed = parseFloat(fixedCostsInput.value) || 0;
-            const nightly = parseFloat(nightlyCostsInput.value) || 0;
-            const total = fixed + nightly;
-            
-            if (total !== totalCost) {
-                const difference = totalCost - total;
-                if (input === fixedCostsInput) {
-                    nightlyCostsInput.value = (parseFloat(nightlyCostsInput.value) + difference).toFixed(2);
-                } else {
-                    fixedCostsInput.value = (parseFloat(fixedCostsInput.value) + difference).toFixed(2);
-                }
-            }
-        });
-    });
+    const percentages = Array.from(percentagesContainer.querySelectorAll('input'))
+        .map(input => parseInt(input.value) || 0);
+    
+    const shares = percentages.map(percentage => totalCost * (percentage / 100));
+    displayResults(shares);
 }
 
 // Update percentage total and validate
 function updatePercentageTotal() {
     const inputs = percentagesContainer.querySelectorAll('input');
-    const total = Array.from(inputs).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+    const total = Array.from(inputs).reduce((sum, input) => sum + (parseInt(input.value) || 0), 0);
     
     const totalElement = document.querySelector('.percentage-total span');
-    totalElement.textContent = total.toFixed(1);
+    totalElement.textContent = total;
     
-    const isValid = Math.abs(total - 100) < 0.1;
+    const isValid = total === 100;
     document.querySelector('.percentage-total').classList.toggle('invalid', !isValid);
     
     return isValid;
@@ -284,95 +343,6 @@ function generateAttendanceTable() {
     // Show attendance section
     attendanceSection.classList.remove('hidden');
     resultsSection.classList.add('hidden');
-}
-
-// Calculate shares based on selected method
-function calculateShares() {
-    const totalCost = parseFloat(totalCostInput.value);
-    if (!totalCost) {
-        showError('Please enter a valid total cost');
-        return;
-    }
-    
-    const calcMethod = document.querySelector('input[name="calc-method"]:checked').value;
-    const nights = parseInt(nightsInput.value);
-    const people = parseInt(peopleInput.value);
-    
-    // Get attendance data
-    const attendance = [];
-    for (let i = 0; i < people; i++) {
-        const personNights = [];
-        const cells = attendanceTable.querySelectorAll(`tr:nth-child(${i + 2}) td.night-cell`);
-        cells.forEach(cell => {
-            personNights.push(cell.classList.contains('selected'));
-        });
-        attendance.push(personNights);
-    }
-    
-    let shares = [];
-    
-    switch(calcMethod) {
-        case 'equal':
-            // Simple equal split
-            const equalShare = totalCost / people;
-            shares = Array(people).fill(equalShare);
-            break;
-            
-        case 'nightly':
-            // Calculate based on nights stayed
-            const totalNights = attendance.reduce((sum, person) => 
-                sum + person.filter(night => night).length, 0);
-                
-            if (totalNights === 0) {
-                showError('Please select at least one night in the attendance table');
-                return;
-            }
-            
-            const costPerNight = totalCost / totalNights;
-            shares = attendance.map(person => 
-                person.filter(night => night).length * costPerNight);
-            break;
-            
-        case 'weighted':
-            // Combine fixed costs and per-night costs
-            const fixedCosts = parseFloat(fixedCostsInput.value) || 0;
-            const nightlyCosts = parseFloat(nightlyCostsInput.value) || 0;
-            
-            // Calculate fixed cost shares (equal split)
-            const fixedShare = fixedCosts / people;
-            
-            // Calculate nightly cost shares
-            const totalPersonNights = attendance.reduce((sum, person) => 
-                sum + person.filter(night => night).length, 0);
-            
-            if (totalPersonNights === 0) {
-                showError('Please select at least one night in the attendance table');
-                return;
-            }
-            
-            const costPerPersonNight = nightlyCosts / totalPersonNights;
-            
-            shares = attendance.map(person => {
-                const nightsStayed = person.filter(night => night).length;
-                return fixedShare + (nightsStayed * costPerPersonNight);
-            });
-            break;
-            
-        case 'percentage':
-            // Custom percentage split
-            if (!updatePercentageTotal()) {
-                showError('Percentage total must equal 100%');
-                return;
-            }
-            
-            const percentages = Array.from(percentagesContainer.querySelectorAll('input'))
-                .map(input => parseFloat(input.value) || 0);
-            
-            shares = percentages.map(percentage => totalCost * (percentage / 100));
-            break;
-    }
-    
-    displayResults(shares);
 }
 
 // Display Results

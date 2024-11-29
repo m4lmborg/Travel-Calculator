@@ -210,46 +210,65 @@ main {
     margin-left: 1.75rem;
 }
 
-/* Percentage Inputs */
-.percentage-inputs,
-.weighted-inputs {
-    margin-top: 1.5rem;
-    padding: 1.5rem;
-    background-color: var(--background-color);
-    border-radius: var(--border-radius);
+/* Percentage Input Styles */
+.percentage-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100px;
 }
 
-.percentage-inputs h4,
-.weighted-inputs h4 {
-    margin-bottom: 1rem;
+.percentage-input-wrapper input {
+    width: 100%;
+    padding-right: 25px;
 }
 
-.percentages-container {
-    display: grid;
-    gap: 1rem;
-    margin-bottom: 1rem;
+.percent-symbol {
+    position: absolute;
+    right: 8px;
+    color: var(--text-secondary);
+    pointer-events: none;
 }
 
 .percentage-input-group {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-}
-
-.percentage-input-group input {
-    width: 80px;
-    padding: 0.5rem;
+    padding: 0.75rem;
+    background-color: var(--surface-color);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
 }
 
-.percentage-total {
+.percentage-input-group label {
     font-weight: 500;
     color: var(--text-primary);
+    flex: 1;
+}
+
+.percentage-input-group input {
+    text-align: right;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    width: 70px;
+}
+
+.percentage-total {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
 }
 
 .percentage-total.invalid {
     color: var(--error-color);
+    background-color: rgba(239, 68, 68, 0.1);
 }
 
 /* Weighted Split Inputs */
