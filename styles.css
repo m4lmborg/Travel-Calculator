@@ -1,0 +1,543 @@
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-color: #64748b;
+    --background-color: #f8fafc;
+    --surface-color: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --success-color: #22c55e;
+    --error-color: #ef4444;
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background-color: var(--background-color);
+}
+
+/* Header Styles */
+header {
+    background-color: var(--surface-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--primary-color);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    transition: var(--transition);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--primary-color);
+}
+
+/* Main Content Styles */
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.calculator-container {
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.input-section h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.input-section p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-field label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.input-field input {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.input-field input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.currency-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-input span {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.currency-input input {
+    padding-left: 1.75rem;
+}
+
+.calculation-method {
+    margin-bottom: 2rem;
+}
+
+.calculation-method h3 {
+    margin-bottom: 1rem;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.radio-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.radio-container input[type="radio"] {
+    accent-color: var(--primary-color);
+}
+
+/* Calculation Method Styles */
+.calculation-method {
+    margin: 2rem 0;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.radio-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.radio-container:hover {
+    background-color: var(--background-color);
+}
+
+.radio-container.selected {
+    border-color: var(--primary-color);
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+.radio-label {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.method-description {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-left: 1.75rem;
+}
+
+/* Percentage Inputs */
+.percentage-inputs,
+.weighted-inputs {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+}
+
+.percentage-inputs h4,
+.weighted-inputs h4 {
+    margin-bottom: 1rem;
+}
+
+.percentages-container {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.percentage-input-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.percentage-input-group input {
+    width: 80px;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.percentage-total {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.percentage-total.invalid {
+    color: var(--error-color);
+}
+
+/* Weighted Split Inputs */
+.weighted-input-group {
+    margin-bottom: 1.5rem;
+}
+
+.weighted-input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.input-description {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.currency-input {
+    position: relative;
+    max-width: 200px;
+}
+
+.currency-input span {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+.currency-input input {
+    width: 100%;
+    padding: 0.75rem;
+    padding-left: 1.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+
+/* Hide radio button but keep it accessible */
+.radio-container input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Custom radio button style */
+.radio-label::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    transition: var(--transition);
+}
+
+.radio-container input[type="radio"]:checked + .radio-label::before {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+    box-shadow: inset 0 0 0 4px var(--surface-color);
+}
+
+/* Button Styles */
+.primary-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.primary-button:hover {
+    background-color: var(--primary-hover);
+}
+
+.secondary-button {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.secondary-button:hover {
+    background-color: var(--background-color);
+    border-color: var(--text-secondary);
+}
+
+/* Attendance Table Styles */
+.attendance-section {
+    margin-top: 3rem;
+}
+
+.table-controls {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.attendance-table-container {
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+#attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#attendance-table th,
+#attendance-table td {
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+#attendance-table th {
+    background-color: var(--background-color);
+    font-weight: 500;
+}
+
+#attendance-table td {
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#attendance-table td.selected {
+    background-color: rgba(37, 99, 235, 0.1);
+}
+
+/* Results Section Styles */
+.results-section {
+    margin-top: 3rem;
+}
+
+.results-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.summary-card {
+    background-color: var(--background-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+}
+
+.chart-container {
+    width: 100%;
+    height: 300px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* People Names Section */
+.people-names-section {
+    margin: 2rem 0;
+}
+
+.people-names-section h3 {
+    margin-bottom: 1rem;
+}
+
+.names-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.name-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--background-color);
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.name-input-group input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0.25rem;
+    font-size: 1rem;
+}
+
+.name-input-group input:focus {
+    outline: none;
+}
+
+.name-input-group .person-number {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    min-width: 24px;
+}
+
+/* Responsive adjustments for name inputs */
+@media (max-width: 768px) {
+    .names-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Footer Styles */
+footer {
+    background-color: var(--surface-color);
+    margin-top: 4rem;
+    padding: 3rem 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h4 {
+    margin-bottom: 1rem;
+}
+
+.footer-section a {
+    display: block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    transition: var(--transition);
+}
+
+.footer-section a:hover {
+    color: var(--primary-color);
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* Utility Classes */
+.hidden {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .input-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .calculator-container {
+        padding: 1rem;
+    }
+}
