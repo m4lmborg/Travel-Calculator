@@ -2,6 +2,10 @@
 
 A modern web application for splitting travel expenses among group members. This calculator offers multiple ways to divide costs fairly based on different scenarios.
 
+## Live Site
+
+Try it out here: https://m4lmborg.github.io/Travel-Calculator/
+
 ## Features
 
 - Multiple calculation methods:
@@ -43,3 +47,10 @@ A modern web application for splitting travel expenses among group members. This
 - Interactive UI
 - PDF export
 - Responsive design
+
+## Development
+
+To run locally:
+1. Clone the repository
+2. Open index.html in your browser
+3. No build process or server required!
