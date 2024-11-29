@@ -22,6 +22,9 @@ const weightedInputs = document.getElementById('weighted-inputs');
 const fixedCostsInput = document.getElementById('fixed-costs');
 const nightlyCostsInput = document.getElementById('nightly-costs');
 
+const startDateInput = document.getElementById('start-date');
+const endDateInput = document.getElementById('end-date');
+
 let chart = null;
 let participantNames = [];
 
@@ -174,6 +177,63 @@ function updatePercentageTotal() {
     return isValid;
 }
 
+// Initialize dates
+function initializeDates() {
+    const today = new Date();
+    const endDate = new Date();
+    endDate.setDate(today.getDate() + 7); // Set end date to 7 days from today
+    
+    // Format dates for input fields (YYYY-MM-DD)
+    startDateInput.value = formatDate(today);
+    endDateInput.value = formatDate(endDate);
+    
+    // Set min dates to prevent selecting past dates
+    startDateInput.min = formatDate(today);
+    
+    updateNights();
+}
+
+// Format date as YYYY-MM-DD
+function formatDate(date) {
+    return date.toISOString().split('T')[0];
+}
+
+// Calculate nights between dates
+function updateNights() {
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
+    
+    // Calculate the difference in days
+    const timeDiff = endDate.getTime() - startDate.getTime();
+    const nightsDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    // Update nights input
+    nightsInput.value = Math.max(1, nightsDiff);
+    
+    // If attendance table exists, regenerate it
+    if (attendanceTable.innerHTML !== '') {
+        generateAttendanceTable();
+    }
+}
+
+// Event Listeners for dates
+startDateInput.addEventListener('change', function() {
+    // Ensure end date is not before start date
+    if (endDateInput.value < startDateInput.value) {
+        endDateInput.value = startDateInput.value;
+    }
+    endDateInput.min = startDateInput.value;
+    updateNights();
+});
+
+endDateInput.addEventListener('change', function() {
+    // Ensure start date is not after end date
+    if (startDateInput.value > endDateInput.value) {
+        startDateInput.value = endDateInput.value;
+    }
+    updateNights();
+});
+
 // Generate Attendance Table
 function generateAttendanceTable() {
     const nights = parseInt(nightsInput.value);
@@ -187,10 +247,22 @@ function generateAttendanceTable() {
     // Clear existing table
     attendanceTable.innerHTML = '';
     
-    // Create header row
+    // Create header row with dates
     const headerRow = document.createElement('tr');
-    headerRow.innerHTML = '<th>Name</th>' + 
-        Array.from({length: nights}, (_, i) => `<th>Night ${i + 1}</th>`).join('');
+    headerRow.innerHTML = '<th>Name</th>';
+    
+    // Add date headers
+    const startDate = new Date(startDateInput.value);
+    for (let i = 0; i < nights; i++) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            weekday: 'short'
+        });
+        headerRow.innerHTML += `<th>${formattedDate}</th>`;
+    }
     attendanceTable.appendChild(headerRow);
     
     // Create rows for each person
@@ -450,5 +522,6 @@ function showError(message) {
 
 // Initialize tooltips and other UI enhancements
 document.addEventListener('DOMContentLoaded', () => {
+    initializeDates();
     // Any initialization code can go here
 });
